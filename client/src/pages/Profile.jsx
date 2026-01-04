@@ -1,4 +1,5 @@
 import React, { useRef, useState } from "react";
+import Toast from "../components/Toast";
 import { useDispatch, useSelector } from "react-redux";
 import { FiUpload } from "react-icons/fi";
 import { updateUser } from "../redux/user/userSlice";
@@ -7,11 +8,7 @@ export default function Profile() {
   const { currentUser } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const [file, setFile] = useState(null);
-  const [notification, setNotification] = useState(null);
-  const showNotification = (message, type = "info", duration = 4000) => {
-    setNotification({ message, type });
-    setTimeout(() => setNotification(null), duration);
-  };
+  const [toast, setToast] = useState(null);
   // compute user object/id robustly in case persisted state stores a wrapper
   const userId = currentUser?._id ?? currentUser?.user?._id ?? currentUser?.id;
   const initialAvatar = currentUser?.avatar ?? currentUser?.user?.avatar ?? null;
@@ -42,7 +39,7 @@ export default function Profile() {
       formData.append("file", file);
 
       if (!userId) {
-        showNotification("User ID unavailable. Please sign in again.", "error");
+        setToast({ message: "User ID unavailable. Please sign in again.", type: "error" });
         setLoading(false);
         return;
       }
@@ -55,7 +52,7 @@ export default function Profile() {
       const data = await res.json();
 
       if (!data.success) {
-        showNotification("Upload failed: " + (data.message || ""), "error");
+        setToast({ message: "Upload failed: " + (data.message || ""), type: "error" });
         return;
       }
 
@@ -63,10 +60,10 @@ export default function Profile() {
       const newAvatar = data.user?.avatar ?? data.avatar ?? null;
       if (newAvatar) dispatch(updateUser({ avatar: newAvatar }));
       setFile(null);
-      showNotification("Profile picture updated!", "success");
+      setToast({ message: "Profile picture updated!", type: "success" });
     } catch (err) {
       console.error(err);
-      showNotification("Upload failed", "error");
+      setToast({ message: "Upload failed", type: "error" });
     } finally {
       setLoading(false);
     }
@@ -74,10 +71,9 @@ export default function Profile() {
 
   return (
     <div className="p-3 max-w-lg mx-auto">
-      {notification && (
-        <div className={`fixed top-8 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded shadow text-white ${notification.type === 'success' ? 'bg-green-600' : notification.type === 'error' ? 'bg-red-600' : 'bg-blue-600'}`}>
-          {notification.message}
-        </div>
+      {/* Toast component rendered here */}
+      {toast && (
+        <Toast toast={toast} onClose={() => setToast(null)} />
       )}
       <h1 className="text-3xl font-semibold text-center my-7">Profile</h1>
 

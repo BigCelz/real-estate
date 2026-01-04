@@ -1,4 +1,5 @@
 import User from "../models/user.model.js";
+import bcrypt from "bcryptjs";
 
 export const test = (req, res) => {
   res.json({ message: "User controller is working" });
@@ -37,5 +38,73 @@ export const UploadProfilePic = async (req, res) => {
       success: false,
       message: "Internal server error",
     });
+  }
+};
+
+
+// export const updateUser = async (req, res, next) => {
+//   if (req.user.id !== req.params.id) {
+//     return res.status(403).json({
+//       success: false,
+//       message: "You can update only your own profile",
+//     });
+//   }
+//   try {
+//     if (req.body.password) {
+//         req.body.password = bcrypt.hashSync(req.body.password, 10);
+//     }
+//     const updatedUser = await User.findByIdAndUpdate(
+//         req.params.id, {
+//             $set: {
+//                 username: req.body.username,
+//                 email: req.body.email,
+//                 password: req.body.password,
+//                 avatar: req.body.avatar,
+//             }
+//         }, { new: true } 
+//     )
+//     const { password, ...others } = updatedUser._doc;
+//     res.status(200).json({
+//         success: true,
+//         user: others,
+//     });
+//   } catch (error) {
+//     next(error);
+//   }
+// }
+
+export const updateUser = async (req, res, next) => {
+  if (req.user.id !== req.params.id) {
+    return res.status(403).json({
+      success: false,
+      message: "You can update only your own profile",
+    });
+  }
+
+  try {
+    const updates = {};
+
+    if (req.body.username) updates.username = req.body.username;
+    if (req.body.email) updates.email = req.body.email;
+    if (req.body.avatar) updates.avatar = req.body.avatar;
+
+    if (req.body.password && req.body.password.trim() !== "") {
+      updates.password = bcrypt.hashSync(req.body.password, 10);
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      req.params.id,
+      { $set: updates },
+      { new: true }
+    );
+
+    const { password, ...others } = updatedUser._doc;
+
+    res.status(200).json({
+      success: true,
+      user: others,
+    });
+  } catch (error) {
+    next(error);
   }
 };
