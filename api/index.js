@@ -5,6 +5,10 @@ import userRouter from "./routes/user.route.js";
 import authRouter from "./routes/auth.route.js";
 
 dotenv.config();
+// load Cloudinary config after env vars are available
+import("./config/cloudinary.js").catch((err) => {
+  console.error("Failed to load Cloudinary config:", err);
+});
 
 mongoose
   .connect(process.env.MONGO)
@@ -25,9 +29,6 @@ app.get("/test", (req, res) => {
 app.use("/api/user", userRouter);
 app.use("/api/auth", authRouter);
 
-app.listen(3000, () => {
-  console.log("Server running on port 3000");
-});
 
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
@@ -38,3 +39,9 @@ app.use((err, req, res, next) => {
     message,
   });
 });
+
+app.listen(3000, () => {
+  console.log("Server running on port 3000");
+});
+
+
