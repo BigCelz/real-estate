@@ -2,7 +2,15 @@ import React, { useRef, useState, useEffect } from "react";
 import Toast from "../components/Toast";
 import { useDispatch, useSelector } from "react-redux";
 import { FiUpload } from "react-icons/fi";
-import { updateUser, updateUserFailure, updateUserStart, updateUserSuccess } from "../redux/user/userSlice";
+import {
+  deleteUserFailure,
+  deleteUserStart,
+  deleteUserSuccess,
+  updateUser,
+  updateUserFailure,
+  updateUserStart,
+  updateUserSuccess,
+} from "../redux/user/userSlice";
 
 export default function Profile() {
   const { currentUser, error } = useSelector((state) => state.user);
@@ -15,7 +23,8 @@ export default function Profile() {
   });
 
   const userId = currentUser?._id ?? currentUser?.user?._id ?? currentUser?.id;
-  const initialAvatar = currentUser?.avatar ?? currentUser?.user?.avatar ?? null;
+  const initialAvatar =
+    currentUser?.avatar ?? currentUser?.user?.avatar ?? null;
   const [preview, setPreview] = useState(initialAvatar);
   const [loading, setLoading] = useState(false);
   // console.log(currentUser);
@@ -24,7 +33,7 @@ export default function Profile() {
     const selectedFile = e.target.files[0];
     if (selectedFile) {
       setFile(selectedFile);
-      setPreview(URL.createObjectURL(selectedFile)); 
+      setPreview(URL.createObjectURL(selectedFile));
     }
   };
 
@@ -34,14 +43,19 @@ export default function Profile() {
       username: currentUser?.username ?? currentUser?.user?.username ?? "",
       email: currentUser?.email ?? currentUser?.user?.email ?? "",
     });
-    setPreview(currentUser?.avatar ?? currentUser?.user?.avatar ?? initialAvatar);
+    setPreview(
+      currentUser?.avatar ?? currentUser?.user?.avatar ?? initialAvatar
+    );
   }, [currentUser]);
 
   // handle profile info update (username, email)
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!userId) {
-      setToast({ message: "User ID unavailable. Please sign in again.", type: "error" });
+      setToast({
+        message: "User ID unavailable. Please sign in again.",
+        type: "error",
+      });
       return;
     }
 
@@ -98,7 +112,10 @@ export default function Profile() {
       formData.append("file", file);
 
       if (!userId) {
-        setToast({ message: "User ID unavailable. Please sign in again.", type: "error" });
+        setToast({
+          message: "User ID unavailable. Please sign in again.",
+          type: "error",
+        });
         setLoading(false);
         return;
       }
@@ -118,12 +135,18 @@ export default function Profile() {
       try {
         data = await res.json();
       } catch (err) {
-        setToast({ message: "Invalid JSON response from server", type: "error" });
+        setToast({
+          message: "Invalid JSON response from server",
+          type: "error",
+        });
         return;
       }
 
       if (!data?.success) {
-        setToast({ message: "Upload failed: " + (data?.message || ""), type: "error" });
+        setToast({
+          message: "Upload failed: " + (data?.message || ""),
+          type: "error",
+        });
         return;
       }
 
@@ -145,15 +168,51 @@ export default function Profile() {
       ...formData,
       [e.target.id]: e.target.value,
     });
-  }
+  };
 
+  // const handleDelete = async () => {
+  //   try {
+  //     dispatch(deleteUserStart());
+  //     const res = await fetch(`/api/user/delete/${currentUser._id}`, {
+  //       method: "DELETE",
+  //       credentials: "include",
+  //     });
+  //     const data = await res.json();
+  //     if (data.success === false) {
+  //       dispatch(deleteUserFailure(data.message || "Delete failed"));
+  //       return;
+  //     }
+  //     dispatch(deleteUserSuccess(data));
+  //   } catch (error) {
+  //     dispatch(deleteUserFailure("Something went wrong. Please try again."));
+  //   }
+  // };
+
+  const handleDelete = async () => {
+    try {
+      dispatch(deleteUserStart());
+      const res = await fetch(`/api/user/delete/${currentUser._id}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+
+      const data = await res.json();
+      if (!res.ok || data.success === false) {
+        dispatch(deleteUserFailure(data.message || "Delete failed"));
+        return;
+      }
+
+      dispatch(deleteUserSuccess()); 
+      navigate("/sign-in");
+    } catch (error) {
+      dispatch(deleteUserFailure("Something went wrong. Please try again."));
+    }
+  };
 
   return (
     <div className="p-3 max-w-lg mx-auto">
       {/* Toast component rendered here */}
-      {toast && (
-        <Toast toast={toast} onClose={() => setToast(null)} />
-      )}
+      {toast && <Toast toast={toast} onClose={() => setToast(null)} />}
       <h1 className="text-3xl font-semibold text-center my-7">Profile</h1>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -204,12 +263,14 @@ export default function Profile() {
         </button>
 
         <div className="flex justify-between mt-5">
-          <span className="text-red-700 cursor-pointer">Delete</span>
+          <span onClick={handleDelete} className="text-red-700 cursor-pointer">
+            Delete
+          </span>
 
           <span className="text-red-700 cursor-pointer">Sign Out</span>
         </div>
       </form>
-      {error && (<div className="text-red-600 mt-4 text-center">{error}</div>)}
+      {error && <div className="text-red-600 mt-4 text-center">{error}</div>}
     </div>
   );
 }
