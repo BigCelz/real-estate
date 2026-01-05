@@ -14,6 +14,7 @@ import {
   updateUserStart,
   updateUserSuccess,
 } from "../redux/user/userSlice";
+import { Link } from "react-router-dom";
 
 export default function Profile() {
   const { currentUser, error } = useSelector((state) => state.user);
@@ -263,6 +264,10 @@ export default function Profile() {
         >
           {loading ? "Updating..." : "Update Profile"}
         </button>
+
+        <Link to="/create-listing" className="bg-green-700 text-white p-3 rounded-lg uppercase text-center hover:opacity-95">
+          Create Listing
+        </Link>
 
         <div className="flex justify-between mt-5">
           <span onClick={handleDelete} className="text-red-700 cursor-pointer">
