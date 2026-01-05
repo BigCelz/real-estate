@@ -20,7 +20,9 @@ const listingSchema = new mongoose.Schema(
     },
     discountPrice: {
       type: Number,
-      required: true,
+      required: function () {
+        return this.offer === true;
+      },
     },
     bathrooms: {
       type: Number,
@@ -37,6 +39,15 @@ const listingSchema = new mongoose.Schema(
     parking: {
       type: Boolean,
       required: true,
+    },
+    offer: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+    images: {
+      type: [String],
+      default: [],
     },
   },
   { timestamps: true }
