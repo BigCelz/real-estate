@@ -6,6 +6,9 @@ import {
   deleteUserFailure,
   deleteUserStart,
   deleteUserSuccess,
+  signoutUserFailure,
+  signoutUserStart,
+  signoutUserSuccess,
   updateUser,
   updateUserFailure,
   updateUserStart,
@@ -170,24 +173,6 @@ export default function Profile() {
     });
   };
 
-  // const handleDelete = async () => {
-  //   try {
-  //     dispatch(deleteUserStart());
-  //     const res = await fetch(`/api/user/delete/${currentUser._id}`, {
-  //       method: "DELETE",
-  //       credentials: "include",
-  //     });
-  //     const data = await res.json();
-  //     if (data.success === false) {
-  //       dispatch(deleteUserFailure(data.message || "Delete failed"));
-  //       return;
-  //     }
-  //     dispatch(deleteUserSuccess(data));
-  //   } catch (error) {
-  //     dispatch(deleteUserFailure("Something went wrong. Please try again."));
-  //   }
-  // };
-
   const handleDelete = async () => {
     try {
       dispatch(deleteUserStart());
@@ -209,9 +194,26 @@ export default function Profile() {
     }
   };
 
+  const handleSignout = async () => {
+    try {
+      dispatch(signoutUserStart());
+      const res = await fetch(`/api/auth/signout`);
+      const data = await res.json();
+
+      if (!res.ok || data.success === false) {
+        dispatch(signoutUserFailure(data.message || "Sign out failed"));
+        return;
+      }
+      dispatch(signoutUserSuccess());
+      navigate("/sign-in");
+    } catch (error) {
+      dispatch(signoutUserFailure("Something went wrong. Please try again."));
+    }
+  }
+
   return (
     <div className="p-3 max-w-lg mx-auto">
-      {/* Toast component rendered here */}
+      {/* Toast */}
       {toast && <Toast toast={toast} onClose={() => setToast(null)} />}
       <h1 className="text-3xl font-semibold text-center my-7">Profile</h1>
 
@@ -267,7 +269,7 @@ export default function Profile() {
             Delete
           </span>
 
-          <span className="text-red-700 cursor-pointer">Sign Out</span>
+          <span onClick={handleSignout} className="text-red-700 cursor-pointer">Sign Out</span>
         </div>
       </form>
       {error && <div className="text-red-600 mt-4 text-center">{error}</div>}
