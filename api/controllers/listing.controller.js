@@ -1,15 +1,20 @@
 import Listing from "../models/listing.model.js";
+import { errorHandler } from "../utils/error.js";
 
 export const uploadListingImages = async (req, res, next) => {
   try {
     if (!req.files || req.files.length === 0) {
-      return res.status(400).json({ success: false, message: "No files uploaded" });
+      return res
+        .status(400)
+        .json({ success: false, message: "No files uploaded" });
     }
 
     // multer-storage-cloudinary stores URL on file.path (or file.location)
     // `req.files` preserves the upload order. We map to URLs in the same order
     // so the frontend can treat the first image as the cover image.
-    const images = req.files.map((f) => f.path || f.location || f.secure_url || f.url).filter(Boolean);
+    const images = req.files
+      .map((f) => f.path || f.location || f.secure_url || f.url)
+      .filter(Boolean);
 
     res.status(200).json({ success: true, images });
   } catch (error) {
@@ -23,26 +28,44 @@ export const createListing = async (req, res, next) => {
       ...req.body,
       userRef: req.user.id,
     };
-
-    // if files were uploaded as multipart/form-data, multer will populate `req.files`
     if (req.files && req.files.length > 0) {
       payload.images = req.files
         .map((f) => f.path || f.location || f.secure_url || f.url)
         .filter(Boolean);
     } else if (req.body.images) {
-      // ensure images is an array if provided as JSON/text
       try {
-        payload.images = typeof req.body.images === "string" ? JSON.parse(req.body.images) : req.body.images;
+        payload.images =
+          typeof req.body.images === "string"
+            ? JSON.parse(req.body.images)
+            : req.body.images;
       } catch (err) {
         payload.images = req.body.images;
       }
     }
-
     const listing = await Listing.create(payload);
 
     res.status(201).json({
       success: true,
       listing,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteListing = async (req, res, next) => {
+  try {
+    const listing = await Listing.findById(req.params.id);
+    if (!listing) {
+      return next(errorHandler(404, "Listing not found"));
+    }
+    if (listing.userRef.toString() !== req.user.id) {
+      return next(errorHandler(401, "You can delete only your own listing"));
+    }
+    await Listing.findByIdAndDelete(req.params.id);
+    res.status(200).json({
+      success: true,
+      message: "Listing deleted successfully",
     });
   } catch (error) {
     next(error);

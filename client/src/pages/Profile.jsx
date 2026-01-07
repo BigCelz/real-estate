@@ -197,12 +197,16 @@ export default function Profile() {
     }
   };
 
+
   const handleSignout = async () => {
     try {
       dispatch(signoutUserStart());
-      const res = await fetch(`/api/auth/signout`);
-      const data = await res.json();
 
+      const res = await fetch("/api/auth/signout", {
+        method: "POST", 
+        credentials: "include", 
+      });
+      const data = await res.json();
       if (!res.ok || data.success === false) {
         dispatch(signoutUserFailure(data.message || "Sign out failed"));
         return;
@@ -321,10 +325,10 @@ export default function Profile() {
 
       <h1 className="text-center mt-7 mb-2 text-2xl font-semibold text-slate-800">
         Listings:
-       </h1>
+      </h1>
       <div className="flex flex-col gap-4">
         {userListings &&
-          userListings.length > 0 &&          
+          userListings.length > 0 &&
           userListings.map((listing) => (
             <div
               key={listing._id}
@@ -345,7 +349,6 @@ export default function Profile() {
                 </p>
               </Link>
 
-           
               <div className="flex gap-3">
                 <button className="text-red-600 hover:underline text-sm">
                   Delete
