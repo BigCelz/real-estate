@@ -13,6 +13,9 @@ import {
   updateUserFailure,
   updateUserStart,
   updateUserSuccess,
+  userListingDeleteFailure,
+  userListingDeleteStart,
+  userListingDeleteSuccess,
 } from "../redux/user/userSlice";
 import { Link } from "react-router-dom";
 
@@ -197,14 +200,13 @@ export default function Profile() {
     }
   };
 
-
   const handleSignout = async () => {
     try {
       dispatch(signoutUserStart());
 
       const res = await fetch("/api/auth/signout", {
-        method: "POST", 
-        credentials: "include", 
+        method: "POST",
+        credentials: "include",
       });
       const data = await res.json();
       if (!res.ok || data.success === false) {
@@ -236,6 +238,48 @@ export default function Profile() {
     } catch (error) {
       console.error(error);
       setShowListingsError(true);
+    }
+  };
+
+  const handleListingDelete = async (listingId) => {
+    if (!listingId) {
+      setToast({ message: "Listing ID unavailable.", type: "error" });
+      return;
+    }
+
+    try {
+      dispatch(userListingDeleteStart());
+      const res = await fetch(`/api/listing/delete/${listingId}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+
+      let data;
+      try {
+        data = await res.json();
+      } catch (err) {
+        dispatch(userListingDeleteFailure("Invalid server response"));
+        setToast({ message: "Failed to delete listing", type: "error" });
+        return;
+      }
+
+      if (!res.ok || !data.success) {
+        dispatch(userListingDeleteFailure(data?.message || "Delete failed"));
+        setToast({ message: data?.message || "Delete failed", type: "error" });
+        return;
+      }
+      setUserListings((prev) =>
+        prev.filter((listing) => listing._id !== listingId)
+      );
+      dispatch(userListingDeleteSuccess());
+      setToast({ message: "Listing deleted successfully!", type: "success" });
+    } catch (error) {
+      console.error("handleListingDelete error:", error);
+      dispatch(userListingDeleteFailure("Something went wrong"));
+      setToast({
+        message: "Something went wrong. Please try again.",
+        type: "error",
+      });
     }
   };
 
@@ -323,12 +367,8 @@ export default function Profile() {
         Show Listings
       </button>
 
-      <h1 className="text-center mt-7 mb-2 text-2xl font-semibold text-slate-800">
-        Listings:
-      </h1>
-      <div className="flex flex-col gap-4">
-        {userListings &&
-          userListings.length > 0 &&
+      <div className="flex flex-col gap-4 mt-3">
+        {userListings && userListings.length > 0 ? (
           userListings.map((listing) => (
             <div
               key={listing._id}
@@ -350,7 +390,11 @@ export default function Profile() {
               </Link>
 
               <div className="flex gap-3">
-                <button className="text-red-600 hover:underline text-sm">
+                <button
+                  className="text-red-600 hover:underline text-sm"
+                  // onClick={handleListingDelete}
+                  onClick={() => handleListingDelete(listing._id)}
+                >
                   Delete
                 </button>
 
@@ -359,7 +403,15 @@ export default function Profile() {
                 </button>
               </div>
             </div>
-          ))}
+          ))
+        ) : (
+          <div className="text-center text-slate-500 py-10">
+            <p className="text-lg font-medium">No listings yet</p>
+            <p className="text-sm">
+              You haven’t created any listings. Create one to get started.
+            </p>
+          </div>
+        )}
       </div>
 
       {loading && <p>Loading...</p>}
