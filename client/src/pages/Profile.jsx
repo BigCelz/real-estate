@@ -25,6 +25,8 @@ export default function Profile() {
     username: currentUser?.username || "",
     email: currentUser?.email || "",
   });
+  const [showListingsError, setShowListingsError] = useState(false);
+  const [userListings, setUserListings] = useState([]);
 
   const userId = currentUser?._id ?? currentUser?.user?._id ?? currentUser?.id;
   const initialAvatar =
@@ -188,7 +190,7 @@ export default function Profile() {
         return;
       }
 
-      dispatch(deleteUserSuccess()); 
+      dispatch(deleteUserSuccess());
       navigate("/sign-in");
     } catch (error) {
       dispatch(deleteUserFailure("Something went wrong. Please try again."));
@@ -210,7 +212,28 @@ export default function Profile() {
     } catch (error) {
       dispatch(signoutUserFailure("Something went wrong. Please try again."));
     }
-  }
+  };
+
+  const handleShowListings = async () => {
+    try {
+      setShowListingsError(false);
+
+      const res = await fetch(`/api/user/listings/${currentUser._id}`, {
+        method: "GET",
+        credentials: "include",
+      });
+      const data = await res.json();
+
+      if (!res.ok || data.success === false) {
+        setShowListingsError(true);
+        return;
+      }
+      setUserListings(data.listings || []);
+    } catch (error) {
+      console.error(error);
+      setShowListingsError(true);
+    }
+  };
 
   return (
     <div className="p-3 max-w-lg mx-auto">
@@ -265,19 +288,81 @@ export default function Profile() {
           {loading ? "Updating..." : "Update Profile"}
         </button>
 
-        <Link to="/create-listing" className="bg-green-700 text-white p-3 rounded-lg uppercase text-center hover:opacity-95">
+        <Link
+          to="/create-listing"
+          className="bg-green-700 text-white p-3 rounded-lg uppercase text-center hover:opacity-95"
+        >
           Create Listing
         </Link>
 
         <div className="flex justify-between mt-5">
-          <span onClick={handleDelete} className="text-red-700 cursor-pointer">
+          <span
+            onClick={handleDelete}
+            className="text-red-700 cursor-pointer hover:underline"
+          >
             Delete
           </span>
 
-          <span onClick={handleSignout} className="text-red-700 cursor-pointer">Sign Out</span>
+          <span
+            onClick={handleSignout}
+            className="text-red-700 cursor-pointer hover:underline"
+          >
+            Sign Out
+          </span>
         </div>
       </form>
       {error && <div className="text-red-600 mt-4 text-center">{error}</div>}
+      <button
+        onClick={handleShowListings}
+        className="text-green-700 w-full mt-4 cursor-pointer hover:underline"
+      >
+        Show Listings
+      </button>
+
+      <h1 className="text-center mt-7 mb-2 text-2xl font-semibold text-slate-800">
+        Listings:
+       </h1>
+      <div className="flex flex-col gap-4">
+        {userListings &&
+          userListings.length > 0 &&          
+          userListings.map((listing) => (
+            <div
+              key={listing._id}
+              className="flex justify-between items-center gap-4 border rounded-lg p-3 hover:shadow-md transition"
+            >
+              <Link
+                to={`/listing/${listing._id}`}
+                className="flex items-center gap-4"
+              >
+                <img
+                  src={listing.images?.[0] || ""}
+                  alt={listing.name}
+                  className="h-16 w-16 rounded-md object-cover bg-slate-100"
+                />
+
+                <p className="font-medium text-slate-700 hover:underline">
+                  {listing.name}
+                </p>
+              </Link>
+
+           
+              <div className="flex gap-3">
+                <button className="text-red-600 hover:underline text-sm">
+                  Delete
+                </button>
+
+                <button className="text-green-600 hover:underline text-sm">
+                  Edit
+                </button>
+              </div>
+            </div>
+          ))}
+      </div>
+
+      {loading && <p>Loading...</p>}
+      {showListingsError && (
+        <p className="text-red-500">Failed to load listings</p>
+      )}
     </div>
   );
 }

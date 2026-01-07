@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import OAuth from "../components/OAuth.jsx";
 
-
 export default function SignUp() {
   const [FormData, setFormData] = useState({});
   const [loading, setLoading] = useState(false);
@@ -17,6 +16,7 @@ export default function SignUp() {
     });
   };
 
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -26,9 +26,11 @@ export default function SignUp() {
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include", 
         body: JSON.stringify(FormData),
       });
       const data = await res.json();
+
       if (data.success === false) {
         setLoading(false);
         setError(data.message);
@@ -77,14 +79,13 @@ export default function SignUp() {
         </button>
         <OAuth />
       </form>
-
       <div className="flex gap-2 mt-4">
         <p>Have an account?</p>
         <Link to="/sign-in">
           <span className="text-blue-700 hover:underline">Sign In</span>
         </Link>
-      </div>.
-      {error && <p className="text-red-600 mt-1">{error}</p>}
+      </div>
+      .{error && <p className="text-red-600 mt-1">{error}</p>}
     </div>
   );
 }

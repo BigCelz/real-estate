@@ -1,6 +1,8 @@
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import { errorHandler } from "../utils/error.js";
+import Listing from "../models/listing.model.js";
+import mongoose from "mongoose";
 
 export const test = (req, res) => {
   res.json({ message: "User controller is working" });
@@ -92,3 +94,28 @@ export const deleteUser = async (req, res, next) => {
     next(error);
   }
 };
+
+
+export const getUserListings = async (req, res, next) => {
+  try {
+    if (req.user.id !== req.params.id) {
+      return next(
+        errorHandler(401, "You can access only your own listings")
+      );
+    }
+
+    const listings = await Listing.find({
+      userRef: req.params.id,
+    });
+
+    res.status(200).json({
+      success: true,
+      listings,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+

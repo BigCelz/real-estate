@@ -5,7 +5,8 @@ import parser from "../middlewares/upload.js";
 
 const router = express.Router();
 
-router.post("/create", verifyToken, createListing );
+// allow creating a listing with images in the same multipart/form-data request
+router.post("/create", verifyToken, parser.array("images", 6), createListing );
 
 // upload listing images (max 6)
 router.post("/upload-images", verifyToken, parser.array("images", 6), uploadListingImages);

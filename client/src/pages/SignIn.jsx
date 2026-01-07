@@ -2,10 +2,12 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { signInFailure, signInStart, signInSuccess } from "../redux/user/userSlice";
+import {
+  signInFailure,
+  signInStart,
+  signInSuccess,
+} from "../redux/user/userSlice";
 import OAuth from "../components/OAuth";
-
-
 
 export default function SignIn() {
   const [FormData, setFormData] = useState({});
@@ -29,9 +31,11 @@ export default function SignIn() {
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include", 
         body: JSON.stringify(FormData),
       });
       const data = await res.json();
+
       if (data.success === false) {
         dispatch(signInFailure(data.message));
         return;
@@ -70,15 +74,13 @@ export default function SignIn() {
         </button>
         <OAuth />
       </form>
-      
-
       <div className="flex gap-2 mt-4">
         <p>Dont have an account?</p>
         <Link to="/sign-up">
           <span className="text-blue-700 hover:underline">Sign Up</span>
         </Link>
-      </div>.
-      {error && <p className="text-red-600 mt-1">{error}</p>}
+      </div>
+      .{error && <p className="text-red-600 mt-1">{error}</p>}
     </div>
   );
 }

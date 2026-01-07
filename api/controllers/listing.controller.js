@@ -24,8 +24,13 @@ export const createListing = async (req, res, next) => {
       userRef: req.user.id,
     };
 
-    // ensure images is an array if provided
-    if (req.body.images) {
+    // if files were uploaded as multipart/form-data, multer will populate `req.files`
+    if (req.files && req.files.length > 0) {
+      payload.images = req.files
+        .map((f) => f.path || f.location || f.secure_url || f.url)
+        .filter(Boolean);
+    } else if (req.body.images) {
+      // ensure images is an array if provided as JSON/text
       try {
         payload.images = typeof req.body.images === "string" ? JSON.parse(req.body.images) : req.body.images;
       } catch (err) {
