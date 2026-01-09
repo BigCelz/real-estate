@@ -9,9 +9,6 @@ export const uploadListingImages = async (req, res, next) => {
         .json({ success: false, message: "No files uploaded" });
     }
 
-    // multer-storage-cloudinary stores URL on file.path (or file.location)
-    // `req.files` preserves the upload order. We map to URLs in the same order
-    // so the frontend can treat the first image as the cover image.
     const images = req.files
       .map((f) => f.path || f.location || f.secure_url || f.url)
       .filter(Boolean);
@@ -27,7 +24,9 @@ export const createListing = async (req, res, next) => {
     const payload = {
       ...req.body,
       userRef: req.user.id,
+      type: req.body.type, 
     };
+
     if (req.files && req.files.length > 0) {
       payload.images = req.files
         .map((f) => f.path || f.location || f.secure_url || f.url)
@@ -42,6 +41,7 @@ export const createListing = async (req, res, next) => {
         payload.images = req.body.images;
       }
     }
+
     const listing = await Listing.create(payload);
 
     res.status(201).json({
@@ -82,11 +82,17 @@ export const updateListing = async (req, res, next) => {
       return next(errorHandler(401, "You can update only your own listing"));
     }
 
+    const payload = {
+      ...req.body,
+      type: req.body.type ?? listing.type, // keep old type if not provided
+    };
+
     const updatedListing = await Listing.findByIdAndUpdate(
       req.params.id,
-      req.body,
+      payload,
       { new: true, runValidators: true }
     );
+
     res.status(200).json({
       success: true,
       message: "Listing updated successfully",

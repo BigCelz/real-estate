@@ -30,6 +30,7 @@ function CreateListingForm() {
     furnished: false,
     parking: false,
     offer: false,
+    type: "rent",
   });
   const [images, setImages] = useState([]);
   const [previews, setPreviews] = useState([]);
@@ -46,11 +47,11 @@ function CreateListingForm() {
       }
       // make rent/sale mutually exclusive: checking one unchecks the other
       if (id === "sale" && checked === true) {
-        setFormData((s) => ({ ...s, sale: true, rent: false }));
+        setFormData((s) => ({ ...s, sale: true, rent: false, type: "sale" }));
         return;
       }
       if (id === "rent" && checked === true) {
-        setFormData((s) => ({ ...s, rent: true, sale: false }));
+        setFormData((s) => ({ ...s, rent: true, sale: false, type: "rent" }));
         return;
       }
       setFormData((s) => ({ ...s, [id]: checked }));
@@ -85,7 +86,10 @@ function CreateListingForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!currentUser) {
-      setToast({ message: "Please sign in to create a listing.", type: "error" });
+      setToast({
+        message: "Please sign in to create a listing.",
+        type: "error",
+      });
       return;
     }
     // validation: must have at least one image
@@ -97,7 +101,10 @@ function CreateListingForm() {
     // validation: regularPrice must be numeric
     const regular = Number(formData.regularPrice);
     if (!Number.isFinite(regular) || regular <= 0) {
-      setToast({ message: "Regular price must be a positive number.", type: "error" });
+      setToast({
+        message: "Regular price must be a positive number.",
+        type: "error",
+      });
       return;
     }
 
@@ -105,11 +112,17 @@ function CreateListingForm() {
     if (formData.offer) {
       const discount = Number(formData.discountPrice);
       if (!Number.isFinite(discount) || discount <= 0) {
-        setToast({ message: "Discounted price must be a positive number.", type: "error" });
+        setToast({
+          message: "Discounted price must be a positive number.",
+          type: "error",
+        });
         return;
       }
       if (!(discount < regular)) {
-        setToast({ message: "Discounted price must be lower than regular price.", type: "error" });
+        setToast({
+          message: "Discounted price must be lower than regular price.",
+          type: "error",
+        });
         return;
       }
     }
@@ -137,8 +150,11 @@ function CreateListingForm() {
       const payload = {
         ...formData,
         regularPrice: Number(formData.regularPrice),
-        discountPrice: formData.offer ? Number(formData.discountPrice) : undefined,
+        discountPrice: formData.offer
+          ? Number(formData.discountPrice)
+          : undefined,
         images: imageUrls,
+        type: formData.type, 
       };
       const res = await fetch(`/api/listing/create`, {
         method: "POST",
@@ -297,9 +313,7 @@ function CreateListingForm() {
             />
             <div className="flex flex-col items-center">
               <p>Regular Price</p>
-              {!formData.sale && (
-                <span className="text-sm">($/month)</span>
-              )}
+              {!formData.sale && <span className="text-sm">($/month)</span>}
             </div>
           </div>
           {formData.offer && (
@@ -315,9 +329,7 @@ function CreateListingForm() {
               />
               <div className="flex flex-col items-center">
                 <p>Discounted Price</p>
-                {!formData.sale && (
-                  <span className="text-sm">($/month)</span>
-                )}
+                {!formData.sale && <span className="text-sm">($/month)</span>}
               </div>
             </div>
           )}

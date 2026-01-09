@@ -30,6 +30,7 @@ function UpdateListingForm() {
     furnished: false,
     parking: false,
     offer: false,
+    type: "rent",
   });
   const [images, setImages] = useState([]);
   const [previews, setPreviews] = useState([]);
@@ -86,13 +87,14 @@ function UpdateListingForm() {
       }
       // make rent/sale mutually exclusive: checking one unchecks the other
       if (id === "sale" && checked === true) {
-        setFormData((s) => ({ ...s, sale: true, rent: false }));
+        setFormData((s) => ({ ...s, sale: true, rent: false, type: "sale" }));
         return;
       }
       if (id === "rent" && checked === true) {
-        setFormData((s) => ({ ...s, rent: true, sale: false }));
+        setFormData((s) => ({ ...s, rent: true, sale: false, type: "rent" }));
         return;
       }
+
       setFormData((s) => ({ ...s, [id]: checked }));
     } else if (type === "number") {
       const numeric = value === "" ? "" : Number(value);
@@ -107,7 +109,7 @@ function UpdateListingForm() {
     }
 
     const files = Array.from(e.target.files || []);
-    const combined = [...images, ...files].slice(0, 6 - existingImages.length); 
+    const combined = [...images, ...files].slice(0, 6 - existingImages.length);
     setImages(combined);
 
     // combine existing images URLs + new file previews
@@ -218,6 +220,7 @@ function UpdateListingForm() {
           ? Number(formData.discountPrice)
           : undefined,
         images: [...existingImages, ...(imageUrls || [])],
+        type: formData.type, 
       };
 
       const res = await fetch(`/api/listing/update/${listingId}`, {

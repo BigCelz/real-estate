@@ -14,6 +14,11 @@ const listingSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    type: {
+      type: String,
+      enum: ["rent", "sale"],
+      required: true,
+    },
     regularPrice: {
       type: Number,
       required: true,
