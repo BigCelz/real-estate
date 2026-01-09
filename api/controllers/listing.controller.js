@@ -119,3 +119,33 @@ export const getListing = async (req, res, next) => {
     next(error);
   }
 };
+
+export const getListings = async (req, res, next) => {
+  try {
+    const limit = parseInt(req.query.limit) || 9;
+    const startIndex = parseInt(req.query.startIndex) || 0;
+
+    const filters = {
+      ...(req.query.type && { type: req.query.type }),
+      ...(req.query.offer && { offer: req.query.offer === "true" }),
+      ...(req.query.furnished && { furnished: req.query.furnished === "true" }),
+      ...(req.query.parking && { parking: req.query.parking === "true" }),
+      ...(req.query.search && {
+        name: { $regex: req.query.search, $options: "i" },
+      }),
+    };
+
+    const listings = await Listing.find(filters)
+      .sort({ createdAt: -1 })
+      .limit(limit)
+      .skip(startIndex);
+
+    res.status(200).json({
+      success: true,
+      count: listings.length,
+      listings,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
