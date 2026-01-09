@@ -14,6 +14,8 @@ import {
   FaParking,
   FaShare,
 } from "react-icons/fa";
+import { useSelector } from "react-redux";
+import Contact from "../components/Contact";
 
 export default function Listing() {
   const { listingId } = useParams();
@@ -21,7 +23,9 @@ export default function Listing() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [copied, setCopied] = useState();
+  const [contact, setContact] = useState(false);
   SwiperCore.use([Navigation]);
+  const { currentUser } = useSelector((state) => state.user);
 
   useEffect(() => {
     const fetchListing = async () => {
@@ -44,6 +48,13 @@ export default function Listing() {
 
     fetchListing();
   }, [listingId]);
+
+  console.log("listing.userRef:", listing?.userRef);
+  console.log("currentUser._id:", currentUser?._id);
+  console.log(
+    "comparison:",
+    String(listing?.userRef) === String(currentUser?._id)
+  );
 
   return (
     <main>
@@ -70,7 +81,7 @@ export default function Listing() {
               </SwiperSlide>
             ))}
           </Swiper>
-          
+
           <div className="fixed top-[13%] right-[3%] z-10 flex flex-col items-end gap-2">
             <button
               className="border border-slate-300 rounded-full w-12 h-12 flex justify-center items-center bg-slate-100 cursor-pointer hover:bg-slate-200 transition"
@@ -160,6 +171,27 @@ export default function Listing() {
               {listing.furnished ? "Furnished" : "Unfurnished"}
             </li>
           </ul>
+
+          {currentUser &&
+            !contact &&
+            String(listing.userRef) !== String(currentUser._id) && (
+              <button
+                onClick={() => setContact(true)}
+                className="bg-slate-800 mt-4 text-white rounded-lg uppercase hover:bg-slate-900 transition p-4 w-full font-semibold"
+              >
+                Contact Landlord
+              </button>
+            )}
+
+            {contact && (
+              <Contact listing={listing} />
+            )}
+
+          {!currentUser && (
+            <p className="mt-4 text-center text-sm text-gray-600">
+              Sign in to contact the landlord
+            </p>
+          )}
         </div>
       ) : (
         <p className="text-center mt-6 text-gray-500">Loading listing...</p>
