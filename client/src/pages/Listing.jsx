@@ -61,7 +61,7 @@ export default function Listing() {
             {listing.images.map((img, index) => (
               <SwiperSlide key={index}>
                 <div
-                  className="width-full md:h-[550px] h-[400px] "
+                  className="w-full md:h-[550px] h-[400px] "
                   style={{
                     background: `url(${img}) center no-repeat`,
                     backgroundSize: "cover",
@@ -138,7 +138,7 @@ export default function Listing() {
             {listing.description}
           </p>
 
-          <ul className="text-green-900 font-semibold text-sm items-center flex gap-4 md:gap-6 mt-2">
+          <ul className="text-green-900 font-semibold text-sm items-center flex gap-4 md:gap-6 mt-2 flex-wrap">
             <li className="flex items-center gap-1 whitespace-nowrap">
               <FaBed className="text-lg" />
               {listing.bedrooms > 1
