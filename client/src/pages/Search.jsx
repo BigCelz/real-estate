@@ -210,59 +210,147 @@ export default function Search() {
           <p className="text-center text-gray-500">No listings found</p>
         )}
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {listings.map((listing) => (
+            // <Link
+            //   to={`/listing/${listing._id}`}
+            //   key={listing._id}
+            //   className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition"
+            // >
+            //   <img
+            //     src={listing.images?.[0] || "/placeholder.png"}
+            //     alt={listing.name || listing.title}
+            //     className="h-48 w-full object-cover"
+            //   />
+            //   <div className="p-4 flex flex-col gap-2">
+            //     <p className="text-lg font-semibold text-slate-800">
+            //       {listing.name || listing.title}
+            //     </p>
+            //     <p className="text-sm text-gray-600 flex items-center gap-1">
+            //       <IoLocationOutline className="text-green-700" />
+            //       {listing.address || listing.location}
+            //     </p>
+            //     <p className="text-green-700 font-bold text-lg flex items-center gap-2">
+            //       {listing.offer ? (
+            //         <>
+            //           <span>₦{listing.discountPrice?.toLocaleString()}</span>
+            //           <span className="line-through text-gray-400 text-sm">
+            //             ₦
+            //             {(
+            //               listing.regularPrice || listing.price
+            //             )?.toLocaleString()}
+            //           </span>
+            //           <span className="bg-red-600 text-white text-xs px-2 py-0.5 rounded">
+            //             {listing.regularPrice
+            //               ? `${Math.round(
+            //                   ((listing.regularPrice - listing.discountPrice) /
+            //                     listing.regularPrice) *
+            //                     100
+            //                 )}% Off`
+            //               : "Off"}
+            //           </span>
+            //         </>
+            //       ) : (
+            //         <>
+            //           ₦
+            //           {(
+            //             listing.regularPrice || listing.price
+            //           )?.toLocaleString()}
+            //         </>
+            //       )}
+            //       {listing.type === "rent" && " / Year"}
+            //     </p>
+
+            //     <span
+            //       className={`w-fit text-xs px-3 py-2 rounded-lg text-white ${
+            //         listing.type === "rent" ? "bg-blue-700" : "bg-red-800"
+            //       }`}
+            //     >
+            //       {listing.type === "rent" ? "For Rent" : "For Sale"}
+            //     </span>
+            //   </div>
+            // </Link>
             <Link
               to={`/listing/${listing._id}`}
               key={listing._id}
-              className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition"
+              className="group bg-white rounded-xl shadow-sm hover:shadow-lg transition overflow-hidden flex flex-col"
             >
-              <img
-                src={listing.images?.[0] || "/placeholder.png"}
-                alt={listing.name || listing.title}
-                className="h-48 w-full object-cover"
-              />
-              <div className="p-4 flex flex-col gap-2">
-                <p className="text-lg font-semibold text-slate-800">
+              {/* Image */}
+              <div className="relative w-full aspect-[4/3] sm:aspect-[16/10] overflow-hidden">
+                <img
+                  src={listing.images?.[0] || "/placeholder.png"}
+                  alt={listing.name || listing.title}
+                  className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                />
+
+                {listing.offer && (
+                  <span className="absolute top-3 left-3 bg-red-600 text-white text-xs font-semibold px-2 py-1 rounded">
+                    Offer
+                  </span>
+                )}
+              </div>
+
+              {/* Content */}
+              <div className="p-4 flex flex-col gap-2 flex-1">
+                {/* Title */}
+                <p className="text-base sm:text-lg font-semibold text-slate-800 line-clamp-1">
                   {listing.name || listing.title}
                 </p>
-                <p className="text-sm text-gray-600 flex items-center gap-1">
-                  <IoLocationOutline className="text-green-700" />
+
+                {/* Location */}
+                <p className="text-xs sm:text-sm text-gray-600 flex items-center gap-1 line-clamp-1">
+                  <IoLocationOutline className="text-green-700 shrink-0" />
                   {listing.address || listing.location}
                 </p>
-                <p className="text-green-700 font-bold text-lg flex items-center gap-2">
-                  {listing.offer ? (
-                    <>
-                      <span>₦{listing.discountPrice?.toLocaleString()}</span>
-                      <span className="line-through text-gray-400 text-sm">
+
+                {/* Price */}
+                <div className="mt-1">
+                  <p className="text-green-700 font-bold text-sm sm:text-lg flex flex-wrap items-center gap-2">
+                    {listing.offer ? (
+                      <>
+                        <span>₦{listing.discountPrice?.toLocaleString()}</span>
+
+                        <span className="line-through text-gray-400 text-xs sm:text-sm">
+                          ₦
+                          {(
+                            listing.regularPrice || listing.price
+                          )?.toLocaleString()}
+                        </span>
+
+                        {/* <span className="bg-red-600 text-white text-[10px] sm:text-xs px-2 py-0.5 rounded">
+                          {listing.regularPrice
+                            ? `${Math.round(
+                                ((listing.regularPrice -
+                                  listing.discountPrice) /
+                                  listing.regularPrice) *
+                                  100
+                              )}% Off`
+                            : "Off"}
+                        </span> */}
+                      </>
+                    ) : (
+                      <>
                         ₦
                         {(
                           listing.regularPrice || listing.price
                         )?.toLocaleString()}
-                      </span>
-                      <span className="bg-red-600 text-white text-xs px-2 py-0.5 rounded">
-                        {listing.regularPrice
-                          ? `${Math.round(
-                              ((listing.regularPrice - listing.discountPrice) /
-                                listing.regularPrice) *
-                                100
-                            )}% Off`
-                          : "Off"}
-                      </span>
-                    </>
-                  ) : (
-                    <>
-                      ₦
-                      {(
-                        listing.regularPrice || listing.price
-                      )?.toLocaleString()}
-                    </>
-                  )}
-                  {listing.type === "rent" && " / Year"}
-                </p>
+                      </>
+                    )}
 
+                    {listing.type === "rent" && (
+                      <span className="text-xs sm:text-sm text-gray-500">
+                        / Year
+                      </span>
+                    )}
+                  </p>
+                </div>
+
+                {/* Spacer */}
+                <div className="flex-1" />
+
+                {/* Badge */}
                 <span
-                  className={`w-fit text-xs px-3 py-2 rounded-lg text-white ${
+                  className={`w-fit text-xs px-3 py-1 rounded-full text-white ${
                     listing.type === "rent" ? "bg-blue-700" : "bg-red-800"
                   }`}
                 >
