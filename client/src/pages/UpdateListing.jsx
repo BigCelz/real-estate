@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 
 export default function CreateListing() {
   return (
-    <main className="p-3 max-w-4xl mx-auto">
+    <main className="p-3 py-20 max-w-4xl mx-auto">
       <h1 className="text-3xl my-7 font-semibold text-center">
         Update a Listing
       </h1>

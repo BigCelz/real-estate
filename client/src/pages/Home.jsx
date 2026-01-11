@@ -6,6 +6,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import SwiperCore from "swiper";
 import { Navigation } from "swiper/modules";
 import "swiper/css/bundle";
+import ListingItem from "../components/ListingItem";
 
 export default function Home() {
   const [offerListings, setOfferListings] = useState([]);
@@ -40,7 +41,6 @@ export default function Home() {
 
     fetchListings();
   }, []);
-
 
   return (
     <div className="px-4 max-w-6xl mx-auto">
@@ -96,9 +96,76 @@ export default function Home() {
         </div>
       </div>
 
-      {/* MORE SECTIONS BELOW */}
-      <div className="py-16">
-        {/* rent / sale / featured sections go here */}
+      {/* Listings Sections */}
+      <div className="py-16 flex flex-col gap-12">
+        {/* Offer Section */}
+        {offerListings?.length > 0 && (
+          <div>
+            <div className="flex flex-col mb-4 gap-1">
+              <h2 className="text-2xl font-semibold text-slate-600">
+                Recent Offers
+              </h2>
+              <Link
+                to="/search?offer=true"
+                className="text-sm text-blue-800 hover:underline cursor-pointer"
+              >
+                Show me offers →
+              </Link>
+            </div>
+
+            <div className="flex gap-4 flex-wrap">
+              {offerListings.map((listing) => (
+                <ListingItem listing={listing} key={listing._id} />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Rent Section */}
+        {rentListings?.length > 0 && (
+          <div>
+            <div className="flex flex-col mb-4 gap-1">
+              <h2 className="text-2xl font-semibold text-slate-600">
+                Recent Places for Rent
+              </h2>
+              <Link
+                to="/search?type=rent"
+                className="text-sm text-blue-800 hover:underline cursor-pointer"
+              >
+                Show me places for rent →
+              </Link>
+            </div>
+
+            <div className="flex gap-4 flex-wrap">
+              {rentListings.map((listing) => (
+                <ListingItem listing={listing} key={listing._id} />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Sale Section */}
+        {saleListings?.length > 0 && (
+          <div>
+            <div className="flex flex-col mb-4 gap-1">
+              <h2 className="text-2xl font-semibold text-slate-600">
+                Recent Properties for Sale
+              </h2>
+              <Link
+                to="/search?type=sale"
+                className="text-sm text-blue-800 hover:underline cursor-pointer"
+              >
+                Show me properties for sale →
+              </Link>
+            </div>
+
+            <div className="flex gap-4 flex-wrap">
+              {saleListings.map((listing) => (
+                <ListingItem listing={listing} key={listing._id} />
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

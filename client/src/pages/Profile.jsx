@@ -367,7 +367,7 @@ export default function Profile() {
         Show Listings
       </button>
 
-      <div className="flex flex-col gap-4 mt-3">
+      {/* <div className="flex flex-col gap-4 mt-3">
         {userListings && userListings.length > 0 ? (
           userListings.map((listing) => (
             <div
@@ -409,6 +409,64 @@ export default function Profile() {
           <div className="text-center text-slate-500 py-10">
             <p className="text-lg font-medium">No listings yet</p>
             <p className="text-sm">
+              You haven’t created any listings. Create one to get started.
+            </p>
+          </div>
+        )}
+      </div> */}
+
+      <div className="mt-6 flex flex-col gap-4">
+        {userListings?.length > 0 ? (
+          userListings.map((listing) => (
+            <div
+              key={listing._id}
+              className="flex items-center justify-between gap-4 rounded-xl border border-slate-200 bg-white p-4 hover:shadow-sm transition"
+            >
+              {/* Left: Image + title */}
+              <Link
+                to={`/listing/${listing._id}`}
+                className="flex items-center gap-4 min-w-0"
+              >
+                <img
+                  src={listing.images?.[0] || "/placeholder.png"}
+                  alt={listing.name}
+                  className="h-16 w-16 rounded-lg object-cover bg-slate-100 flex-shrink-0"
+                />
+
+                <div className="min-w-0">
+                  <p className="font-semibold text-slate-700 truncate hover:underline">
+                    {listing.name}
+                  </p>
+                  <p className="text-xs text-slate-400">
+                    Click to view listing
+                  </p>
+                </div>
+              </Link>
+
+              {/* Right: actions */}
+              <div className="flex items-center gap-4">
+                <button
+                  onClick={() => handleListingDelete(listing._id)}
+                  className="text-sm font-medium text-red-600 hover:underline"
+                >
+                  Delete
+                </button>
+
+                <Link
+                  to={`/update-listing/${listing._id}`}
+                  className="text-sm font-medium text-green-600 hover:underline"
+                >
+                  Edit
+                </Link>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 py-12 text-center">
+            <p className="text-lg font-semibold text-slate-600">
+              No listings yet
+            </p>
+            <p className="text-sm text-slate-500 mt-1">
               You haven’t created any listings. Create one to get started.
             </p>
           </div>

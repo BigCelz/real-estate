@@ -210,70 +210,12 @@ export default function Search() {
           <p className="text-center text-gray-500">No listings found</p>
         )}
 
-        <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="flex flex-wrap gap-6">
           {listings.map((listing) => (
-            // <Link
-            //   to={`/listing/${listing._id}`}
-            //   key={listing._id}
-            //   className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition"
-            // >
-            //   <img
-            //     src={listing.images?.[0] || "/placeholder.png"}
-            //     alt={listing.name || listing.title}
-            //     className="h-48 w-full object-cover"
-            //   />
-            //   <div className="p-4 flex flex-col gap-2">
-            //     <p className="text-lg font-semibold text-slate-800">
-            //       {listing.name || listing.title}
-            //     </p>
-            //     <p className="text-sm text-gray-600 flex items-center gap-1">
-            //       <IoLocationOutline className="text-green-700" />
-            //       {listing.address || listing.location}
-            //     </p>
-            //     <p className="text-green-700 font-bold text-lg flex items-center gap-2">
-            //       {listing.offer ? (
-            //         <>
-            //           <span>₦{listing.discountPrice?.toLocaleString()}</span>
-            //           <span className="line-through text-gray-400 text-sm">
-            //             ₦
-            //             {(
-            //               listing.regularPrice || listing.price
-            //             )?.toLocaleString()}
-            //           </span>
-            //           <span className="bg-red-600 text-white text-xs px-2 py-0.5 rounded">
-            //             {listing.regularPrice
-            //               ? `${Math.round(
-            //                   ((listing.regularPrice - listing.discountPrice) /
-            //                     listing.regularPrice) *
-            //                     100
-            //                 )}% Off`
-            //               : "Off"}
-            //           </span>
-            //         </>
-            //       ) : (
-            //         <>
-            //           ₦
-            //           {(
-            //             listing.regularPrice || listing.price
-            //           )?.toLocaleString()}
-            //         </>
-            //       )}
-            //       {listing.type === "rent" && " / Year"}
-            //     </p>
-
-            //     <span
-            //       className={`w-fit text-xs px-3 py-2 rounded-lg text-white ${
-            //         listing.type === "rent" ? "bg-blue-700" : "bg-red-800"
-            //       }`}
-            //     >
-            //       {listing.type === "rent" ? "For Rent" : "For Sale"}
-            //     </span>
-            //   </div>
-            // </Link>
             <Link
               to={`/listing/${listing._id}`}
               key={listing._id}
-              className="group bg-white rounded-xl shadow-sm hover:shadow-lg transition overflow-hidden flex flex-col"
+              className="group bg-blue-white w-[300px] rounded-xl shadow-sm hover:shadow-lg transition overflow-hidden flex flex-col"
             >
               {/* Image */}
               <div className="relative w-full aspect-[4/3] sm:aspect-[16/10] overflow-hidden">
@@ -338,7 +280,7 @@ export default function Search() {
                     )}
 
                     {listing.type === "rent" && (
-                      <span className="text-xs sm:text-sm text-gray-500">
+                      <span className="text-xs sm:text-sm text-gray-500 whitespace-nowrap">
                         / Year
                       </span>
                     )}
