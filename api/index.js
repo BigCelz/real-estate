@@ -5,13 +5,15 @@ import userRouter from "./routes/user.route.js";
 import authRouter from "./routes/auth.route.js";
 import cookieParser from "cookie-parser";
 import listingRouter from "./routes/listing.route.js";
+import path from 'path'
 
 dotenv.config();
-// load Cloudinary config after env vars are available
+// cloudinary
 import("./config/cloudinary.js").catch((err) => {
   console.error("Failed to load Cloudinary config:", err);
 });
 
+// db
 mongoose
   .connect(process.env.MONGO)
   .then(() => {
@@ -21,6 +23,8 @@ mongoose
     console.error("Error connecting to MongoDB", err);
   });
 
+const __dirname = path.resolve();
+
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
@@ -29,11 +33,22 @@ app.get("/test", (req, res) => {
   res.send("API is working");
 });
 
+// api routes
 app.use("/api/user", userRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/listing", listingRouter);
 
 
+// serve frontend
+app.use(express.static(path.join(__dirname, "client/dist")));
+
+app.get("*", (req, res) => {
+  res.sendFile(
+    path.join(__dirname, "client", "dist", "index.html")
+  );
+});
+
+// error handler
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
   const message = err.message || "Internal Server Error";

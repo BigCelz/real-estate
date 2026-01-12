@@ -15,7 +15,7 @@ export default function Footer() {
         <div className="text-white font-bold text-lg">KaidaHeavens</div>
 
         <div className="mt-4 text-center text-gray-500 text-xs">
-          &copy; {new Date().getFullYear()} YourRealty. All rights reserved.
+          &copy; {new Date().getFullYear()} KaidaHeavens. All rights reserved.
         </div>
 
         {/* Social Icons */}
