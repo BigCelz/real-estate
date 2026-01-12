@@ -14,54 +14,47 @@ export default function Home() {
   const [saleListings, setSaleListings] = useState([]);
   const [rentListings, setRentListings] = useState([]);
   const [loading, setLoading] = useState(false);
-  
+
   const API_URL = import.meta.env.VITE_API_URL;
 
+  useEffect(() => {
+    const API_URL = import.meta.env.VITE_API_URL;
 
+    const fetchListings = async () => {
+      try {
+        setLoading(true);
 
- useEffect(() => {
-  const fetchListings = async () => {
-    try {
-      setLoading(true);
+        const requests = [
+          fetch(`${API_URL}/api/listing/get?offer=true`),
+          fetch(`${API_URL}/api/listing/get?type=rent`),
+          fetch(`${API_URL}/api/listing/get?type=sale`),
+        ];
 
-      const requests = [
-        fetch("/api/listing/get?offer=true"),
-        fetch("/api/listing/get?type=rent"),
-        fetch("/api/listing/get?type=sale"),
-      ];
+        const [offerRes, rentRes, saleRes] = await Promise.all(requests);
 
-      const [offerRes, rentRes, saleRes] = await Promise.all(requests);
+        if (!offerRes.ok || !rentRes.ok || !saleRes.ok) {
+          throw new Error("One or more listing requests failed");
+        }
 
-      if (!offerRes.ok || !rentRes.ok || !saleRes.ok) {
-        throw new Error("One or more listing requests failed");
+        const offerData = await offerRes.json();
+        const rentData = await rentRes.json();
+        const saleData = await saleRes.json();
+
+        setOfferListings(offerData?.listings || offerData || []);
+        setRentListings(rentData?.listings || rentData || []);
+        setSaleListings(saleData?.listings || saleData || []);
+      } catch (err) {
+        console.error("Fetch listings error:", err);
+        setOfferListings([]);
+        setRentListings([]);
+        setSaleListings([]);
+      } finally {
+        setLoading(false);
       }
+    };
 
-      const offerData = await offerRes.json();
-      const rentData = await rentRes.json();
-      const saleData = await saleRes.json();
-
-      setOfferListings(
-        Array.isArray(offerData) ? offerData : offerData.listings || []
-      );
-      setRentListings(
-        Array.isArray(rentData) ? rentData : rentData.listings || []
-      );
-      setSaleListings(
-        Array.isArray(saleData) ? saleData : saleData.listings || []
-      );
-    } catch (err) {
-      console.error("Fetch listings error:", err);
-      setOfferListings([]);
-      setRentListings([]);
-      setSaleListings([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  fetchListings();
-}, []);
-
+    fetchListings();
+  }, []);
 
   return (
     <div className="px-4 max-w-6xl mx-auto">
