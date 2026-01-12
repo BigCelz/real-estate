@@ -46,7 +46,7 @@ export default function SignUp() {
   };
 
   return (
-    <div className="px-4 py-20g max-w-lg !w-full mx-auto !overflow-x-hidden">
+    <div className="px-4 py-20 max-w-lg !w-full mx-auto !overflow-x-hidden">
       <h1 className="text-3xl text-center my-7 font-semibold">Sign Up</h1>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <input

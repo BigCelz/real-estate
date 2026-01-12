@@ -24,7 +24,7 @@ export default function ListingItem({ listing }) {
 
       {/* Content */}
       <div className="p-4 flex flex-col gap-2">
-        <h3 className="text-lg font-semibold text-slate-800 truncate">
+        <h3 className="text-base font-semibold text-slate-800 truncate">
           {listing.name || listing.title}
         </h3>
 
@@ -37,7 +37,7 @@ export default function ListingItem({ listing }) {
         <div className="flex items-center gap-2 mt-1">
           {listing.offer ? (
             <>
-              <span className="text-green-700 font-bold text-lg">
+              <span className="text-green-700 font-bold text-base">
                 ₦{listing.discountPrice?.toLocaleString()}
               </span>
               <span className="text-sm text-gray-400 line-through">
@@ -53,7 +53,7 @@ export default function ListingItem({ listing }) {
               </span>
             </>
           ) : (
-            <span className="text-green-700 font-bold text-lg">
+            <span className="text-green-700 font-bold text-base">
               ₦{(listing.regularPrice || listing.price)?.toLocaleString()}
             </span>
           )}
