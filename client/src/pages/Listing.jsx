@@ -38,7 +38,6 @@ export default function Listing() {
           return;
         }
         setListing(data.listing);
-        console.log(data.listing);
       } catch (error) {
         setError(true);
       } finally {
@@ -48,13 +47,6 @@ export default function Listing() {
 
     fetchListing();
   }, [listingId]);
-
-  console.log("listing.userRef:", listing?.userRef);
-  console.log("currentUser._id:", currentUser?._id);
-  console.log(
-    "comparison:",
-    String(listing?.userRef) === String(currentUser?._id)
-  );
 
   return (
     <main>

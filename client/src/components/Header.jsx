@@ -8,11 +8,11 @@ export default function Header() {
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
-  console.log(searchTerm)
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!searchTerm.trim()) return;
-
+    
     const urlParams = new URLSearchParams(location.search);
     urlParams.set("searchTerm", searchTerm);
 

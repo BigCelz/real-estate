@@ -7,6 +7,7 @@ import SwiperCore from "swiper";
 import { Navigation } from "swiper/modules";
 import "swiper/css/bundle";
 import ListingItem from "../components/ListingItem";
+import hero1 from "../assets/hero1.png";
 
 export default function Home() {
   const [offerListings, setOfferListings] = useState([]);
@@ -68,31 +69,14 @@ export default function Home() {
           </Link>
         </div>
 
+        {/* Image */}
         <div className="w-full md:w-1/2">
-          <Swiper navigation className="rounded-lg overflow-hidden">
-            {loading && (
-              <SwiperSlide>
-                <div className="h-[420px] flex items-center justify-center bg-slate-200">
-                  Loading offers...
-                </div>
-              </SwiperSlide>
-            )}
-
-            {!loading &&
-              offerListings?.length > 0 &&
-              offerListings.map((listing) => (
-                <SwiperSlide key={listing._id}>
-                  <div
-                    className="h-[420px]"
-                    style={{
-                      backgroundImage: `url(${listing.images?.[0]})`,
-                      backgroundSize: "cover",
-                      backgroundPosition: "center",
-                    }}
-                  />
-                </SwiperSlide>
-              ))}
-          </Swiper>
+          <img
+            src={hero1}
+            alt="Modern home in Lekki"
+            className="w-full h-[420px] object-cover rounded-lg"
+            loading="lazy"
+          />
         </div>
       </div>
 
