@@ -3,6 +3,16 @@ import bcrypt from "bcryptjs";
 import { errorHandler } from "../utils/error.js";
 import jwt from "jsonwebtoken";
 
+// Helper to set cookies correctly
+const setCookie = (res, name, token) => {
+  res.cookie(name, token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production", // HTTPS only in prod
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // cross-origin safe in prod
+    maxAge: 24 * 60 * 60 * 1000, // 1 day
+  });
+};
+
 export const signup = async (req, res, next) => {
   try {
     const { username, email, password } = req.body;
@@ -38,78 +48,72 @@ export const signin = async (req, res, next) => {
     const validPassword = bcrypt.compareSync(password, validUser.password);
     if (!validPassword) return next(errorHandler(401, "Invalid credentials"));
 
-    const token = jwt.sign({ id: validUser._id }, process.env.JWT_SECRET);
+    const token = jwt.sign({ id: validUser._id }, process.env.JWT_SECRET, {
+      expiresIn: "1d",
+    });
 
     const { password: pwd, ...userData } = validUser._doc;
 
-    res
-      .cookie("access_token", token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-        expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
-      })
-      .status(200)
-      .json({
-        success: true,
-        message: "Signed in successfully",
-        user: userData,
-      });
+    // Set production-ready cookie
+    setCookie(res, "access_token", token);
+
+    res.status(200).json({
+      success: true,
+      message: "Signed in successfully",
+      user: userData,
+    });
   } catch (error) {
     next(error);
   }
 };
 
-
 export const googleAuth = async (req, res, next) => {
- try {
-  const user = await User.findOne({ email: req.body.email });
-  if(user){
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
-    const { password: pwd, ...userData } = user._doc;
-    res.cookie("access_token", token, {httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      expires: new Date(Date.now() + 24 * 60 * 60 * 1000),})
-      .status(200)
-      .json({
-        success: true,
-        message: "Signed in successfully",
-        user: userData,
-      });
-  } else {
-    const generatedPassword = Math.random().toString(36).slice(-8);
-    const hashedPassword = bcrypt.hashSync(generatedPassword, 10);
+  try {
+    const user = await User.findOne({ email: req.body.email });
+    let token, userData;
 
-    const newUser = new User({
-      username: req.body.name.split(" ").join("").toLowerCase() + Math.random().toString(36).slice(-4),
-      email: req.body.email,
-      password: hashedPassword,
-      avatar: req.body.photo,
+    if (user) {
+      token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1d" });
+      const { password: pwd, ...data } = user._doc;
+      userData = data;
+    } else {
+      const generatedPassword = Math.random().toString(36).slice(-8);
+      const hashedPassword = bcrypt.hashSync(generatedPassword, 10);
+
+      const newUser = new User({
+        username: req.body.name.split(" ").join("").toLowerCase() + Math.random().toString(36).slice(-4),
+        email: req.body.email,
+        password: hashedPassword,
+        avatar: req.body.photo,
+      });
+
+      await newUser.save();
+      token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, { expiresIn: "1d" });
+      const { password: pwd, ...data } = newUser._doc;
+      userData = data;
+    }
+
+    // Set cookie
+    setCookie(res, "access_token", token);
+
+    res.status(200).json({
+      success: true,
+      message: "Signed in successfully",
+      user: userData,
     });
-    await newUser.save();
-    const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET);
-    const { password: pwd, ...userData } = newUser._doc;
-
-    res.cookie("access_token", token, {httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      expires: new Date(Date.now() + 24 * 60 * 60 * 1000),})
-      .status(200)
-      .json({
-        success: true,
-        message: "Signed in successfully",
-        user: userData,
-      });
+  } catch (error) {
+    next(error);
   }
-} catch (error) {
-  next(error);
- }
-}
+};
 
 export const signout = (req, res, next) => {
   try {
-    res.clearCookie("access_token");
+    res.clearCookie("access_token", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    });
+
     res.status(200).json({
       success: true,
       message: "Signed out successfully",
@@ -117,4 +121,4 @@ export const signout = (req, res, next) => {
   } catch (error) {
     next(error);
   }
-}
+};

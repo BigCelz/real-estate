@@ -14,6 +14,10 @@ export default function Home() {
   const [saleListings, setSaleListings] = useState([]);
   const [rentListings, setRentListings] = useState([]);
   const [loading, setLoading] = useState(false);
+  
+  const API_URL = import.meta.env.VITE_API_URL;
+
+
 
  useEffect(() => {
   const fetchListings = async () => {
