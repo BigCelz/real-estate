@@ -8,82 +8,88 @@ import userRouter from "./routes/user.route.js";
 import authRouter from "./routes/auth.route.js";
 import listingRouter from "./routes/listing.route.js";
 
+// load env
 dotenv.config();
 
-// cloudinary
+// cloudinary (safe dynamic import)
 import("./config/cloudinary.js").catch((err) => {
-  console.error("Failed to load Cloudinary config:", err);
+  console.error("Cloudinary config failed:", err);
 });
 
-// DB connection
+// connect DB
 mongoose
   .connect(process.env.MONGO)
-  .then(() => console.log("Connected to MongoDB"))
-  .catch((err) => console.error("MongoDB connection error:", err));
+  .then(() => console.log("✅ MongoDB connected"))
+  .catch((err) => console.error("❌ MongoDB error:", err));
 
 const app = express();
 
-// allowed origins (comma-separated in env)
-const allowedOrigins = process.env.CLIENT_URL?.split(",");
+// =======================
+// MIDDLEWARES
+// =======================
 
-// middlewares
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      // allow server-to-server / Postman
-      if (!origin) return callback(null, true);
-
-      if (allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("CORS not allowed"));
-      }
-    },
-    credentials: true, // 👈 allows cookies to be sent
-  })
-);
-
+// parse json + cookies
 app.use(express.json());
 app.use(cookieParser());
 
-// helper function to set cookies safely
+// CORS (production-safe)
+const allowedOrigins = process.env.CLIENT_URL?.split(",") || [];
+
+app.use(
+  cors({
+    origin: true,  // allows all origins
+    credentials: true
+  })
+);
+
+
+// =======================
+// COOKIE HELPER
+// =======================
+
 export const setCookie = (res, name, value, options = {}) => {
-  const cookieOptions = {
+  res.cookie(name, value, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production", // HTTPS only
-    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // cross-origin safe
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     ...options,
-  };
-  res.cookie(name, value, cookieOptions);
+  });
 };
 
-// test route
+// =======================
+// ROUTES
+// =======================
+
 app.get("/test", (req, res) => {
-  res.send("API is working");
+  res.status(200).json({ message: "API is working 🚀" });
 });
 
-// api routes
 app.use("/api/user", userRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/listing", listingRouter);
 
-// global error handler
-app.use((err, req, res, next) => {
-  const statusCode = err.statusCode || 500;
-  const message = err.message || "Internal Server Error";
+// =======================
+// GLOBAL ERROR HANDLER
+// =======================
 
-  res.status(statusCode).json({
+app.use((err, req, res, next) => {
+  console.error("🔥 Error:", err.message);
+
+  res.status(err.statusCode || 500).json({
     success: false,
-    statusCode,
-    message,
+    message: err.message || "Internal Server Error",
   });
 });
 
-// dynamic port for Render / local dev
+// =======================
+// START SERVER
+// =======================
+
 const PORT = process.env.PORT || 3000;
+
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`🚀 Server running on port ${PORT}`);
 });
 
 
