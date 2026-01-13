@@ -43,14 +43,30 @@ app.use(express.json());
 app.use(cookieParser());
 
 // CORS (production-safe)
+// const allowedOrigins = process.env.CLIENT_URL?.split(",") || [];
+
+// app.use(
+//   cors({
+//     origin: true,  // allows all origins
+//     credentials: true
+//   })
+// );
 const allowedOrigins = process.env.CLIENT_URL?.split(",") || [];
 
 app.use(
   cors({
-    origin: true,  // allows all origins
-    credentials: true
+    origin: function (origin, callback) {
+      // allow requests with no origin (like Postman) or if origin is in allowed list
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true, // allow cookies
   })
 );
+
 
 
 // =======================

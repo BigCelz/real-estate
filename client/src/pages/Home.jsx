@@ -57,7 +57,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="px-4 max-w-6xl mx-auto pt-20 sm:pt-10">
+    <div className="px-4 max-w-6xl mx-auto py-20 sm:py-10">
       {/* hero*/}
       <div className="flex flex-col md:flex-row items-center gap-10 py-28">
         <div className="w-full md:w-1/2">

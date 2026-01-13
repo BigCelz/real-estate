@@ -8,10 +8,11 @@ const setCookie = (res, name, token) => {
   res.cookie(name, token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production", // HTTPS only in prod
-    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // cross-origin safe in prod
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // cross-origin safe in dev
     maxAge: 24 * 60 * 60 * 1000, // 1 day
   });
 };
+
 
 export const signup = async (req, res, next) => {
   try {
