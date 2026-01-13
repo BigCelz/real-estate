@@ -284,7 +284,7 @@ export default function Profile() {
   };
 
   return (
-    <div className="p-3 max-w-lg mx-auto">
+    <div className="p-3 max-w-lg mx-auto py-35 sm:py-30">
       {/* Toast */}
       {toast && <Toast toast={toast} onClose={() => setToast(null)} />}
       <h1 className="text-3xl font-semibold text-center my-7">Profile</h1>

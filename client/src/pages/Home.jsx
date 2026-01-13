@@ -57,11 +57,11 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="px-4 max-w-6xl mx-auto">
+    <div className="px-4 max-w-6xl mx-auto pt-20 sm:pt-10">
       {/* hero*/}
       <div className="flex flex-col md:flex-row items-center gap-10 py-28">
         <div className="w-full md:w-1/2">
-          <h1 className="text-slate-700 font-bold text-2xl lg:text-5xl leading-tight">
+          <h1 className="text-slate-700 font-bold text-2xl lg:text-4xl leading-tight">
             Find your next <span className="text-slate-500">perfect</span>{" "}
             <br />
             place with ease.

@@ -2,8 +2,8 @@ import React from "react";
 
 export default function About() {
   return (
-    <div className="py-30 sm:py-40 max-w-4xl mx-auto text-slate-700 px-4">
-      <h1 className="text-3xl font-bold mb-3 text-slate-800">
+    <div className=" max-w-4xl mx-auto text-slate-700 px-4 py-40 sm:py-30">
+      <h1 className=" font-bold mb-3 text-slate-800 sm:text-3xl text-2xl">
         About Kaida<span className="text-slate-500">Heavens</span>
       </h1>
 
