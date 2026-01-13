@@ -48,7 +48,7 @@ export default function SignIn() {
   };
 
   return (
-    <div className="px-4 py-20 max-w-lg !w-full mx-auto !overflow-x-hidden">
+    <div className="px-4  max-w-lg !w-full mx-auto !overflow-x-hidden py-40 sm:py-20">
       <h1 className="text-3xl text-center my-7 font-semibold">Sign In</h1>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <input
