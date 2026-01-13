@@ -92,7 +92,7 @@ export default function Search() {
   }, [location.search]);
 
   return (
-    <div className="flex flex-col md:flex-row min-h-screen bg-slate-50 py-4">
+    <div className="flex flex-col md:flex-row min-h-screen bg-slate-50 py-40 sm:py-20">
       {/* Left filters */}
       <div className="md:w-80 w-full bg-white border-b md:border-b-0 md:border-r border-slate-200 p-6">
         <h2 className="text-lg font-semibold text-slate-800 mb-6">

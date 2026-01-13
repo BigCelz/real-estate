@@ -75,7 +75,7 @@ export default function Header() {
                 alt="profile image"
               />
             ) : (
-              <li className="text-slate-700 hover:underline font-semibold">
+              <li className="text-slate-700 hover:underline font-semibold whitespace-nowrap">
                 Sign In
               </li>
             )}
