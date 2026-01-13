@@ -3,6 +3,7 @@ import { FiUpload } from "react-icons/fi";
 import Toast from "../components/Toast";
 import { useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { apiFetch } from "../utils/api";
 
 export default function CreateListing() {
   return (
@@ -42,9 +43,7 @@ function UpdateListingForm() {
   useEffect(() => {
     const fetchListing = async () => {
       try {
-        const res = await fetch(`/api/listing/get/${listingId}`, {
-          credentials: "include",
-        });
+        const res = await apiFetch(`/api/listing/get/${listingId}`);
         const data = await res.json();
 
         if (!res.ok || data.success === false) {
@@ -146,11 +145,12 @@ function UpdateListingForm() {
     }
   };
 
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!currentUser) {
       setToast({
-        message: "Please sign in to create a listing.",
+        message: "Please sign in to update a listing.",
         type: "error",
       });
       return;
@@ -164,7 +164,7 @@ function UpdateListingForm() {
       return;
     }
 
-    // validation: regularPrice must be numeric
+    // price validation...
     const regular = Number(formData.regularPrice);
     if (!Number.isFinite(regular) || regular <= 0) {
       setToast({
@@ -173,8 +173,6 @@ function UpdateListingForm() {
       });
       return;
     }
-
-    // if offer is enabled, discountPrice must be numeric and lower than regular
     if (formData.offer) {
       const discount = Number(formData.discountPrice);
       if (!Number.isFinite(discount) || discount <= 0) {
@@ -192,15 +190,16 @@ function UpdateListingForm() {
         return;
       }
     }
+
     setLoading(true);
     try {
+      // Upload new images if any
       let imageUrls = [];
       if (images.length > 0) {
         const fd = new FormData();
         images.forEach((f) => fd.append("images", f));
-        const res = await fetch(`/api/listing/upload-images`, {
+        const res = await apiFetch(`/api/listing/upload-images`, {
           method: "POST",
-          credentials: "include",
           body: fd,
         });
         if (!res.ok) {
@@ -219,22 +218,23 @@ function UpdateListingForm() {
         discountPrice: formData.offer
           ? Number(formData.discountPrice)
           : undefined,
-        images: [...existingImages, ...(imageUrls || [])],
-        type: formData.type, 
+        images: [...existingImages, ...imageUrls],
+        type: formData.type,
       };
 
-      const res = await fetch(`/api/listing/update/${listingId}`, {
+      const res = await apiFetch(`/api/listing/update/${listingId}`, {
         method: "PUT",
-        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
+
       if (!res.ok) {
         const txt = await res.text();
         setToast({ message: txt || "Update listing failed", type: "error" });
         setLoading(false);
         return;
       }
+
       const resJson = await res.json();
       if (!resJson.success) {
         setToast({

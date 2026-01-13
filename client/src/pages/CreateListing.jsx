@@ -36,6 +36,7 @@ function CreateListingForm() {
   const [previews, setPreviews] = useState([]);
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState(null);
+  const API_BASE = import.meta.env.VITE_API_URL;
 
   const handleChange = (e) => {
     const { id, value, type, checked } = e.target;
@@ -132,11 +133,12 @@ function CreateListingForm() {
       if (images.length > 0) {
         const fd = new FormData();
         images.forEach((f) => fd.append("images", f));
-        const res = await fetch(`/api/listing/upload-images`, {
+        const res = await fetch(`${API_BASE}/api/listing/upload-images`, {
           method: "POST",
           credentials: "include",
           body: fd,
         });
+
         if (!res.ok) {
           const txt = await res.text();
           setToast({ message: txt || "Image upload failed", type: "error" });
@@ -154,14 +156,15 @@ function CreateListingForm() {
           ? Number(formData.discountPrice)
           : undefined,
         images: imageUrls,
-        type: formData.type, 
+        type: formData.type,
       };
-      const res = await fetch(`/api/listing/create`, {
+      const res = await fetch(`${API_BASE}/api/listing/create`, {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
+
       if (!res.ok) {
         const txt = await res.text();
         setToast({ message: txt || "Create listing failed", type: "error" });
@@ -329,8 +332,7 @@ function CreateListingForm() {
               />
               <div className="flex flex-col items-center">
                 <p>Discounted Price</p>
-                {!formData.sale &&<span className="text-sm">₦/month</span>}
-
+                {!formData.sale && <span className="text-sm">₦/month</span>}
               </div>
             </div>
           )}
