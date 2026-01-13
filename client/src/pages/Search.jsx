@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { IoLocationOutline } from "react-icons/io5";
+import { apiFetch } from "../utils/api";
 
 export default function Search() {
   const [sidebar, setSidebar] = useState({
@@ -37,13 +38,7 @@ export default function Search() {
     setLoading(true);
     try {
       const query = buildQuery();
-      // const res = await fetch(`/api/listing/get?${query}`);
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/listing/get?${query}`,
-        {
-          credentials: "include",
-        }
-      );
+      const res = await apiFetch(`/api/listing/get?${query}`);
 
       const data = await res.json();
       setListings(data.listings || data || []);
