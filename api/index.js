@@ -43,37 +43,37 @@ app.use(express.json());
 app.use(cookieParser());
 
 // CORS (production-safe)
-// const allowedOrigins = process.env.CLIENT_URL?.split(",") || [];
-
-// app.use(
-//   cors({
-//     origin: true,  // allows all origins
-//     credentials: true
-//   })
-// );
-const allowedOrigins = [
-  "http://localhost:5173", // your dev frontend
-  "https://real-estate-git-main-parcels-projects.vercel.app" // production frontend
-];
+const allowedOrigins = process.env.CLIENT_URL?.split(",") || [];
 
 app.use(
   cors({
-    origin: function (origin, callback) {
-      // allow requests with no origin (like Postman)
-      if (!origin) return callback(null, true);
-
-      if (allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        console.log("Blocked by CORS:", origin);
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    credentials: true, // needed to allow cookies across origins
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // allow these HTTP methods
-    allowedHeaders: ["Content-Type", "Authorization"], // headers the frontend can send
+    origin: true,  // allows all origins
+    credentials: true
   })
 );
+// const allowedOrigins = [
+//   "http://localhost:5173", // your dev frontend
+//   "https://real-estate-git-main-parcels-projects.vercel.app" // production frontend
+// ];
+
+// app.use(
+//   cors({
+//     origin: function (origin, callback) {
+//       // allow requests with no origin (like Postman)
+//       if (!origin) return callback(null, true);
+
+//       if (allowedOrigins.includes(origin)) {
+//         callback(null, true);
+//       } else {
+//         console.log("Blocked by CORS:", origin);
+//         callback(new Error("Not allowed by CORS"));
+//       }
+//     },
+//     credentials: true, // needed to allow cookies across origins
+//     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // allow these HTTP methods
+//     allowedHeaders: ["Content-Type", "Authorization"], // headers the frontend can send
+//   })
+// );
 
 
 
