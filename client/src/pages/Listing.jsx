@@ -16,6 +16,7 @@ import {
 } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import Contact from "../components/Contact";
+import { apiFetch } from "../utils/api";
 
 export default function Listing() {
   const { listingId } = useParams();
@@ -27,12 +28,34 @@ export default function Listing() {
   SwiperCore.use([Navigation]);
   const { currentUser } = useSelector((state) => state.user);
 
+  // useEffect(() => {
+  //   const fetchListing = async () => {
+  //     try {
+  //       setLoading(true);
+  //       const res = await fetch(`/api/listing/get/${listingId}`);
+  //       const data = await res.json();
+  //       if (!res.ok || data.success === false) {
+  //         setError(true);
+  //         return;
+  //       }
+  //       setListing(data.listing);
+  //     } catch (error) {
+  //       setError(true);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   fetchListing();
+  // }, [listingId]);
+
   useEffect(() => {
     const fetchListing = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`/api/listing/get/${listingId}`);
+        const res = await apiFetch(`/api/listing/get/${listingId}`);
         const data = await res.json();
+
         if (!res.ok || data.success === false) {
           setError(true);
           return;
@@ -45,11 +68,11 @@ export default function Listing() {
       }
     };
 
-    fetchListing();
+    if (listingId) fetchListing();
   }, [listingId]);
 
   return (
-    <main>
+    <main className="py-10 sm:py-30">
       {loading && <p className="text-center my-7 text-xl">Loading...</p>}
 
       {error && (
@@ -175,9 +198,7 @@ export default function Listing() {
               </button>
             )}
 
-            {contact && (
-              <Contact listing={listing} />
-            )}
+          {contact && <Contact listing={listing} />}
 
           {!currentUser && (
             <p className="mt-4 text-center text-sm text-gray-600">
