@@ -51,19 +51,27 @@ app.use(cookieParser());
 //     credentials: true
 //   })
 // );
-const allowedOrigins = process.env.CLIENT_URL?.split(",") || [];
+const allowedOrigins = [
+  "http://localhost:5173", // your dev frontend
+  "https://real-estate-git-main-parcels-projects.vercel.app" // production frontend
+];
 
 app.use(
   cors({
     origin: function (origin, callback) {
-      // allow requests with no origin (like Postman) or if origin is in allowed list
-      if (!origin || allowedOrigins.includes(origin)) {
+      // allow requests with no origin (like Postman)
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
+        console.log("Blocked by CORS:", origin);
         callback(new Error("Not allowed by CORS"));
       }
     },
-    credentials: true, // allow cookies
+    credentials: true, // needed to allow cookies across origins
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // allow these HTTP methods
+    allowedHeaders: ["Content-Type", "Authorization"], // headers the frontend can send
   })
 );
 
