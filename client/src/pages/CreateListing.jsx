@@ -313,7 +313,7 @@ function CreateListingForm() {
             />
             <div className="flex flex-col items-center">
               <p>Regular Price</p>
-              {!formData.sale && <span className="text-sm">($/month)</span>}
+              {!formData.sale && <span className="text-sm">₦/month</span>}
             </div>
           </div>
           {formData.offer && (
@@ -329,7 +329,8 @@ function CreateListingForm() {
               />
               <div className="flex flex-col items-center">
                 <p>Discounted Price</p>
-                {!formData.sale && <span className="text-sm">($/month)</span>}
+                {!formData.sale &&<span className="text-sm">₦/month</span>}
+
               </div>
             </div>
           )}

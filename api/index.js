@@ -17,10 +17,20 @@ import("./config/cloudinary.js").catch((err) => {
 });
 
 // connect DB
+// mongoose
+//   .connect(process.env.MONGO)
+//   .then(() => console.log("✅ MongoDB connected"))
+//   .catch((err) => console.error("❌ MongoDB error:", err));
 mongoose
-  .connect(process.env.MONGO)
+  .connect(process.env.MONGO, {
+    serverSelectionTimeoutMS: 30000,
+  })
   .then(() => console.log("✅ MongoDB connected"))
-  .catch((err) => console.error("❌ MongoDB error:", err));
+  .catch((err) => {
+    console.error("❌ MongoDB connection failed:", err.message);
+    process.exit(1);
+  });
+
 
 const app = express();
 
@@ -46,7 +56,6 @@ app.use(
 // =======================
 // COOKIE HELPER
 // =======================
-
 export const setCookie = (res, name, value, options = {}) => {
   res.cookie(name, value, {
     httpOnly: true,
@@ -60,7 +69,6 @@ export const setCookie = (res, name, value, options = {}) => {
 // =======================
 // ROUTES
 // =======================
-
 app.get("/test", (req, res) => {
   res.status(200).json({ message: "API is working 🚀" });
 });
@@ -72,7 +80,6 @@ app.use("/api/listing", listingRouter);
 // =======================
 // GLOBAL ERROR HANDLER
 // =======================
-
 app.use((err, req, res, next) => {
   console.error("🔥 Error:", err.message);
 
@@ -85,7 +92,6 @@ app.use((err, req, res, next) => {
 // =======================
 // START SERVER
 // =======================
-
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
@@ -97,15 +103,3 @@ app.listen(PORT, () => {
 
 
 
-// import path from 'path'
-
-// const __dirname = path.resolve();
-
-// serve frontend
-// app.use(express.static(path.join(__dirname, "client/dist")));
-
-// app.get("*", (req, res) => {
-//   res.sendFile(
-//     path.join(__dirname, "client", "dist", "index.html")
-//   );
-// });
