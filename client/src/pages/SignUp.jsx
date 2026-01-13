@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import OAuth from "../components/OAuth.jsx";
+// import OAuth from "../components/OAuth.jsx";
+import { apiFetch } from "../utils/api";
 
 export default function SignUp() {
   const [FormData, setFormData] = useState({});
@@ -20,17 +21,13 @@ export default function SignUp() {
     e.preventDefault();
     try {
       setLoading(true);
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/auth/signup`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify(FormData),
-        }
-      );
+      const res = await apiFetch("/api/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(FormData),
+      });
 
       const data = await res.json();
 
@@ -80,7 +77,7 @@ export default function SignUp() {
         >
           {loading ? "Signing Up..." : "Sign Up"}
         </button>
-        <OAuth />
+        {/* <OAuth /> */}
       </form>
       <div className="flex gap-2 mt-4">
         <p>Have an account?</p>

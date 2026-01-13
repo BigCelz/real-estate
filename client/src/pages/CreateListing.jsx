@@ -6,8 +6,8 @@ import { useSelector } from "react-redux";
 
 export default function CreateListing() {
   return (
-    <main className="p-3 py-20 max-w-4xl mx-auto py-30 sm:py-10">
-      <h1 className="text-3xl my-7 font-semibold text-center">
+    <main className="p-3  max-w-4xl mx-auto py-40 sm:py-10">
+      <h1 className="text-3xl font-semibold text-center mt-7">
         Create Listing
       </h1>
       <CreateListingForm />
