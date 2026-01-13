@@ -37,7 +37,14 @@ export default function Search() {
     setLoading(true);
     try {
       const query = buildQuery();
-      const res = await fetch(`/api/listing/get?${query}`);
+      // const res = await fetch(`/api/listing/get?${query}`);
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/listing/get?${query}`,
+        {
+          credentials: "include",
+        }
+      );
+
       const data = await res.json();
       setListings(data.listings || data || []);
     } catch (err) {

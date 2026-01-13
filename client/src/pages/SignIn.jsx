@@ -26,14 +26,18 @@ export default function SignIn() {
     e.preventDefault();
     try {
       dispatch(signInStart());
-      const res = await fetch("/api/auth/signin", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include", 
-        body: JSON.stringify(FormData),
-      });
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/auth/signin`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify(FormData),
+        }
+      );
+
       const data = await res.json();
 
       if (data.success === false) {
