@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 
 export default function CreateListing() {
   return (
-    <main className="p-3 py-20 max-w-4xl mx-auto">
+    <main className="p-3 py-20 max-w-4xl mx-auto py-30 sm:py-10">
       <h1 className="text-3xl my-7 font-semibold text-center">
         Create Listing
       </h1>
@@ -192,7 +192,7 @@ function CreateListingForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-4 py-30 sm:py-10">
+    <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-4 p-4">
       {toast && <Toast toast={toast} onClose={() => setToast(null)} />}
       <div className="flex flex-col gap-4 flex-1 min-w-0">
         <input
