@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { apiFetch } from "../utils/api";
 
 export default function Contact({ listing }) {
   const [landlord, setLandlord] = useState(null);
@@ -7,11 +8,11 @@ export default function Contact({ listing }) {
 
   useEffect(() => {
     if (!listing?.userRef) return;
+
     const fetchLandlord = async () => {
       try {
-        const res = await fetch(`/api/user/${listing.userRef}/public`, {
+        const res = await apiFetch(`/api/user/${listing.userRef}/public`, {
           method: "GET",
-          credentials: "include",
         });
         const data = await res.json();
         setLandlord(data.user);
@@ -31,7 +32,7 @@ export default function Contact({ listing }) {
   return (
     <>
       {landlord && (
-        <div className="mt-4 p-4 border border-slate-300 rounded-lg bg-slate-50 max-w-6xl mx-auto flex flex-col gap-4">
+        <div className="mt-4 p-4 border border-slate-300 rounded-lg bg-slate-50 max-w-6xl mx-auto flex flex-col gap-4 py-30 sm:py-10">
           <p className="text-lg text-slate-800">
             Contact{" "}
             <span className="font-semibold text-slate-900">

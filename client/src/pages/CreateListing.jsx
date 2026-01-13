@@ -192,7 +192,7 @@ function CreateListingForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-4 ">
+    <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-4 py-30 sm:py-10">
       {toast && <Toast toast={toast} onClose={() => setToast(null)} />}
       <div className="flex flex-col gap-4 flex-1 min-w-0">
         <input
