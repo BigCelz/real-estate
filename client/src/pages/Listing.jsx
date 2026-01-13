@@ -51,7 +51,7 @@ export default function Listing() {
   }, [listingId]);
 
   return (
-    <main className="py-10 sm:py-30">
+    <main className="py-10 sm:py-10">
       {loading && <p className="text-center my-7 text-xl">Loading...</p>}
 
       {error && (
