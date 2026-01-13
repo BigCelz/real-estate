@@ -28,27 +28,6 @@ export default function Listing() {
   SwiperCore.use([Navigation]);
   const { currentUser } = useSelector((state) => state.user);
 
-  // useEffect(() => {
-  //   const fetchListing = async () => {
-  //     try {
-  //       setLoading(true);
-  //       const res = await fetch(`/api/listing/get/${listingId}`);
-  //       const data = await res.json();
-  //       if (!res.ok || data.success === false) {
-  //         setError(true);
-  //         return;
-  //       }
-  //       setListing(data.listing);
-  //     } catch (error) {
-  //       setError(true);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //   fetchListing();
-  // }, [listingId]);
-
   useEffect(() => {
     const fetchListing = async () => {
       try {
