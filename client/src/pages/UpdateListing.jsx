@@ -7,8 +7,8 @@ import { apiFetch } from "../utils/api";
 
 export default function CreateListing() {
   return (
-    <main className="p-3 py-20 max-w-4xl mx-auto py-20 sm:py-10">
-      <h1 className="text-3xl my-7 font-semibold text-center">
+    <main className="p-3  max-w-4xl mx-auto py-40 sm:py-10">
+      <h1 className="text-3xl font-semibold text-center mt-7">
         Update a Listing
       </h1>
       <UpdateListingForm />

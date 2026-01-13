@@ -18,6 +18,7 @@ import {
   userListingDeleteSuccess,
 } from "../redux/user/userSlice";
 import { Link } from "react-router-dom";
+import { apiFetch } from "../utils/api";
 
 export default function Profile() {
   const { currentUser, error } = useSelector((state) => state.user);
@@ -36,7 +37,6 @@ export default function Profile() {
     currentUser?.avatar ?? currentUser?.user?.avatar ?? null;
   const [preview, setPreview] = useState(initialAvatar);
   const [loading, setLoading] = useState(false);
-  const API_BASE = import.meta.env.VITE_API_URL;
 
   // console.log(currentUser);
 
@@ -73,12 +73,9 @@ export default function Profile() {
     setLoading(true);
     try {
       dispatch(updateUserStart());
-      const res = await fetch(`${API_BASE}/api/user/update/${userId}`, {
+      const res = await apiFetch(`/api/user/update/${userId}`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
 
@@ -131,10 +128,9 @@ export default function Profile() {
         return;
       }
 
-      const res = await fetch(`${API_BASE}/api/user/profile-pic/${userId}`, {
+      const res = await apiFetch(`/api/user/profile-pic/${userId}`, {
         method: "PUT",
         body: formData,
-        credentials: "include",
       });
 
       if (!res.ok) {
@@ -185,13 +181,9 @@ export default function Profile() {
   const handleDelete = async () => {
     try {
       dispatch(deleteUserStart());
-      const res = await fetch(
-        `${API_BASE}/api/user/delete/${currentUser._id}`,
-        {
-          method: "DELETE",
-          credentials: "include",
-        }
-      );
+      const res = await apiFetch(`/api/user/delete/${currentUser._id}`, {
+        method: "DELETE",
+      });
 
       const data = await res.json();
       if (!res.ok || data.success === false) {
@@ -210,10 +202,7 @@ export default function Profile() {
     try {
       dispatch(signoutUserStart());
 
-      const res = await fetch(`${API_BASE}/api/auth/signout`, {
-        method: "POST",
-        credentials: "include",
-      });
+      const res = await apiFetch("/api/auth/signout", { method: "POST" });
 
       const data = await res.json();
       if (!res.ok || data.success === false) {
@@ -231,13 +220,7 @@ export default function Profile() {
     try {
       setShowListingsError(false);
 
-      const res = await fetch(
-        `${API_BASE}/api/user/listings/${currentUser._id}`,
-        {
-          method: "GET",
-          credentials: "include",
-        }
-      );
+      const res = await apiFetch(`/api/user/listings/${currentUser._id}`);
 
       const data = await res.json();
 
@@ -260,9 +243,8 @@ export default function Profile() {
 
     try {
       dispatch(userListingDeleteStart());
-      const res = await fetch(`${API_BASE}/api/listing/delete/${listingId}`, {
+      const res = await apiFetch(`/api/listing/delete/${listingId}`, {
         method: "DELETE",
-        credentials: "include",
       });
 
       let data;

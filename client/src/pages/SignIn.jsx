@@ -7,7 +7,8 @@ import {
   signInStart,
   signInSuccess,
 } from "../redux/user/userSlice";
-import OAuth from "../components/OAuth";
+// import OAuth from "../components/OAuth";
+import { apiFetch } from "../utils/api";
 
 export default function SignIn() {
   const [FormData, setFormData] = useState({});
@@ -26,17 +27,13 @@ export default function SignIn() {
     e.preventDefault();
     try {
       dispatch(signInStart());
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/auth/signin`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify(FormData),
-        }
-      );
+      const res = await apiFetch("/api/auth/signin", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(FormData),
+      });
 
       const data = await res.json();
 
@@ -76,7 +73,7 @@ export default function SignIn() {
         >
           {loading ? "Signing In..." : "Sign In"}
         </button>
-        <OAuth />
+        {/* <OAuth /> */}
       </form>
       <div className="flex gap-2 mt-4">
         <p>Dont have an account?</p>
